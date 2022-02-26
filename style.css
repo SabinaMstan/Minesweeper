@@ -1,0 +1,56 @@
+body {
+  text-align: center;
+}
+
+
+.boardStyle {
+  width: 440px;
+  height: 440px;
+  position: relative;
+  background-color: darkgray;
+  display: grid;
+  grid-template-columns: repeat(20, 20px);
+  grid-gap: 0px;
+  align-content: center;
+}
+
+.dragOn {
+  width: 400px;
+  height: 400px;
+}
+
+.button {
+  position: relative;
+  width: 20px;
+  height: 20px;
+  background-color: lightgray;
+  left: 20px;
+}
+
+.buttonPressed {
+  background-color: darkgray;
+
+}
+
+.showBomb {
+  background-image: url('./images/bomb.png');
+  background-repeat: no-repeat;
+  background-color: darkgray;
+}
+
+.explodedBomb {
+  background-image: url('./images/exploded bomb.png');
+  background-repeat: no-repeat;
+  background-color: darkgray;
+}
+
+.display {
+  width: 30px;
+  height: 20px;
+  margin-right: 30px;
+}
+
+.flag {
+  background-image: url('./images/red_flag.png');
+  background-repeat: no-repeat;
+}
