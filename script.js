@@ -1,24 +1,26 @@
-const nrRows = 20;
-const nrCols = 20;
-const nrBombs = 55;
 const dir = [[-1, 0], [-1, 1], [0, 1], [1, 1], [1, 0], [1, -1], [0, -1], [-1, -1]];
-let isOn = false;
-let score = 0;
-let nrFlags = nrBombs;
-let interval;
-let milliSec = 1000;
-let sec = 0;
+const game = {
+   nrRows: 20,
+   nrCols: 20,
+   nrBombs: 55,
+   isOn: false,
+   score: 0,
+   nrFlags: 55,
+   interval: 0,
+   milliSec: 1000,
+   sec: 0,
+};
 
 //function called when the smiley face is clicked
 function startGame() {
-  if (isOn === false) { //if the game has not started, it starts game
+  if (game.isOn === false) { //if the game has not started, it starts the game
     document.getElementById('board').innerText = '';
-    isOn = true;
+    game.isOn = true;
     let bombs = generateBombs();
     loadBoard(bombs);
-    interval = setInterval(timer, milliSec);
+    game.interval = setInterval(timer, game.milliSec);
   } else { //if the games has started already, it restarts the game
-    clearInterval(interval);
+    clearInterval(game.interval);
     location.reload();
   }
 }
@@ -26,27 +28,27 @@ function startGame() {
 //function counting the seconds since the game started
 function timer() {
   let time = document.getElementById('timer');
-  ++sec;
-  time.value = sec;
+  ++game.sec;
+  time.value = game.sec;
 }
 
 //when clicking right with the mouse, it sets a flag in the box
 document.addEventListener('contextmenu', function(ev) {
   ev.preventDefault();
   let flag = document.getElementById(ev.target.id);
-  if (flag.classList.contains('button')) {
+  if (flag.classList.contains('button') && !flag.classList.contains('flag')) {
     flag.classList.add('flag');
-    --nrFlags;
-    document.getElementById('nrFlags').value = nrFlags;
+    --game.nrFlags;
+    document.getElementById('nrFlags').value = game.nrFlags;
   }
 }, false);
 
 //function used to generate the bombs ids array
 function generateBombs() {
   let bombs = [];
-  const nrBoxes = nrRows * nrCols;
+  const nrBoxes = game.nrRows * game.nrCols;
   let randomNr = generateRandomNumber(nrBoxes);
-  for(let i = 1; i <= nrBombs; ++i) {
+  for(let i = 1; i <= game.nrBombs; ++i) {
     while(bombs.includes(randomNr)) {
       randomNr = generateRandomNumber(nrBoxes);
     }
@@ -58,8 +60,8 @@ function generateBombs() {
 //function called when game starts to display the game board
 function loadBoard(bombs) {
   let id = 0;
-  for (let i = 0; i < nrRows; ++i) {
-    for (let j = 0; j < nrCols; ++j) {
+  for (let i = 0; i < game.nrRows; ++i) {
+    for (let j = 0; j < game.nrCols; ++j) {
       ++id;
       let button = document.createElement('button');
       button.id = [i, j];
@@ -79,12 +81,12 @@ function loadBoard(bombs) {
 function playGame(button) {
   if (button.classList.contains('flag')) {
     button.classList.remove('flag');
-    ++nrFlags;
-    document.getElementById('nrFlags').value = nrFlags;
+    ++game.nrFlags;
+    document.getElementById('nrFlags').value = game.nrFlags;
   } else if (button.classList.contains('isBomb')) {
     gameOver(button.id);
   } else {
-    ++score;
+    ++game.score;
     checkForBombs(button);
     getScore();
   }
@@ -92,13 +94,13 @@ function playGame(button) {
 
 //function that checks if there are bombs around the pressed button and its neighbors
 function checkForBombs(button) {
-  const currentId = button.id.match(/\d+/g);
+    const currentId = button.id.match(/\d+/g);
+    document.getElementById(button.id).classList.add('buttonPressed');
     let boxesToCheck = [];
     boxesToCheck.push(currentId);
     while (boxesToCheck.length) {
       let currentButton = document.getElementById(boxesToCheck[0]);
       currentButton.disabled = true;
-      currentButton.classList.add('buttonPressed');
       let number = getNrBombs(boxesToCheck[0]);
       if (number) {
         currentButton.innerText = number;
@@ -110,7 +112,7 @@ function checkForBombs(button) {
           if (idToCheck != -1 && !thisButton.classList.contains('buttonPressed') && !thisButton.classList.contains('flag')) {
             boxesToCheck.push(idToCheck);
             thisButton.classList.add('buttonPressed');
-            ++score;
+            ++game.score;
           }
         }
       }
@@ -162,8 +164,8 @@ function getCoord(x, y) {
 
 //function that diplays the score
 function getScore() {
-  document.getElementById('score').value = score;
-  if (score === nrRows * nrCols - nrBombs) {
+  document.getElementById('score').value = game.score;
+  if (game.score === game.nrRows * game.nrCols - game.nrBombs) {
     gameWon();
   }
 }
@@ -171,7 +173,7 @@ function getScore() {
 //function called when the game is won
 function gameWon() {
   document.getElementById('start').src = './images/gameWon.png';
-  clearInterval(interval);
+  clearInterval(game.interval);
   alert('Congrats!');
 }
 
@@ -179,15 +181,15 @@ function gameWon() {
 function gameOver(id) {
   document.getElementById(id).classList.add('explodedBomb');
   document.getElementById('start').src = './images/gameOver.png';
-  clearInterval(interval);
+  clearInterval(game.interval);
   alert('That was it!');
   revealBoard();
 }
 
 //function that reveals the board
 function revealBoard() {
-  for (let i = 0; i < nrRows; ++i) {
-    for (let j = 0; j < nrCols; ++j) {
+  for (let i = 0; i < game.nrRows; ++i) {
+    for (let j = 0; j < game.nrCols; ++j) {
       const id = [i, j];
       let currentButton = document.getElementById(id);
       currentButton.disabled = true;
